@@ -1,0 +1,85 @@
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+
+
+class ComicStore:
+    def __init__(self, stock_):
+        self.stock = stock_
+        self.total_sales = 0
+
+    def sell(self, title, quantity):
+        if title in self.stock and quantity <= self.stock[title]:
+            self.stock[title] -= quantity
+            self.total_sales += quantity
+            return True
+        else:
+            return False
+
+    def restock(self, title, quantity):
+        if title in self.stock:
+            self.stock[title] += quantity
+            return True
+        else:
+            return False
+
+
+class ComicStoreGUI:
+    def __init__(self, comic_store):
+        self.comic_store = comic_store
+        self.stock_record = comic_store.stock
+
+        self.beige = "#fff2cc"
+        self.blue = "#008cff"
+        self.green = "#006600"
+        self.blue_font = "#0000fc"
+
+        self.window = tk.Tk()
+        self.window.geometry("800x300")
+        self.window.title("Sales and Stock Level System")
+        self.window.config(bg=self.beige)
+
+        self.titles = ["Select a comic"]  # Necessary for the combobox
+        for comic in self.stock_record:
+            self.titles.append(comic)
+
+        heading_frame = tk.Frame(bg=self.beige)
+        stock_frame = tk.Frame(bg=self.beige)
+
+        self.lb_heading = tk.Label(master=heading_frame,
+                                   text="Comic Book Store",
+                                   font=("Arial", 30, "bold"),
+                                   bg=self.beige, pady=10)
+        self.lb_heading.pack()
+
+        self.stock_label = tk.Label(self.window)
+        self.stock_labels = {}
+        self.count = 0
+        for title, stock_ in self.comic_store.stock.items():
+            label = tk.Label(master=stock_frame, font=("Arial", 12),
+                             bg=self.beige, pady=12,
+                             text=f"{title}: {stock_}")
+            self.stock_labels[title] = label
+
+            label.grid(row=self.count, column=0, sticky='w')
+            self.count += 1
+
+        self.lb_number_sold = tk.Label(master=stock_frame,
+                                       font=("Arial", 12, "bold"),
+                                       text=f"Total number of comics sold "
+                                            f"today: "
+                                            f"{self.comic_store.total_sales}",
+                                       fg=self.blue_font, bg=self.beige,
+                                       pady=12)
+        self.lb_number_sold.grid(row=self.count, column=0, sticky='w')
+
+        self.lb_spacer = tk.Label(master=stock_frame, padx=20, text=" ",
+                                  bg=self.beige)
+        self.lb_spacer.grid(row=0, column=1)
+
+        self.lb_select_comic = tk.Label(master=stock_frame,
+                                        font=("Arial", 12, "bold"),
+                                        bg=self.beige,
+                                        text="Select comic title: ",
+                                        pady=12, padx=15)
+        self.lb_select_comic.grid(row=0, column=2, sticky='w')
